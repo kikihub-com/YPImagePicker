@@ -152,8 +152,10 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     
     @objc
     func squareCropButtonTapped() {
-        doAfterLibraryPermissionCheck { [weak self] in
-            self?.v.assetViewContainer.squareCropButtonTapped()
+        doAfterLibraryPermissionCheck { [weak self] status in
+            if status == true {
+                self?.v.assetViewContainer.squareCropButtonTapped()
+            }
         }
     }
     
@@ -170,11 +172,13 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             return
         }
 
-        doAfterLibraryPermissionCheck { [weak self] in
-            if self?.isMultipleSelectionEnabled == false {
-                self?.selectedItems.removeAll()
+        doAfterLibraryPermissionCheck { [weak self] status in
+            if status {
+                if self?.isMultipleSelectionEnabled == false {
+                    self?.selectedItems.removeAll()
+                }
+                self?.toggleMultipleSelection()
             }
-            self?.toggleMultipleSelection()
         }
     }
     

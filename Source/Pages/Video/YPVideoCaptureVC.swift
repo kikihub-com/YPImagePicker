@@ -109,8 +109,11 @@ internal class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     
     @objc
     func shotButtonTapped() {
-        doAfterCameraPermissionCheck { [weak self] in
-            self?.toggleRecording()
+        doAfterCameraPermissionCheck { [weak self] status in
+            if status {
+                self?.toggleRecording()
+            }
+            
         }
     }
     

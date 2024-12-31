@@ -9,10 +9,23 @@
 import UIKit
 
 internal struct YPPermissionDeniedPopup {
-    static func buildGoToSettingsAlert(cancelBlock: @escaping () -> Void) -> UIAlertController {
+    enum AlertType {
+        case camera
+        case photoLibrary
+        
+        func getMessage() -> String {
+            switch self {
+            case .camera:
+                return YPConfig.wordings.permissionPopup.messageCamera
+            case .photoLibrary:
+                return YPConfig.wordings.permissionPopup.message
+            }
+        }
+    }
+    static func buildGoToSettingsAlert(alertType: AlertType, cancelBlock: @escaping () -> Void) -> UIAlertController {
         let alert = UIAlertController(title:
                                         YPConfig.wordings.permissionPopup.title,
-                                      message: YPConfig.wordings.permissionPopup.message,
+                                      message: alertType.getMessage(),
                                       preferredStyle: .alert)
         alert.addAction(
             UIAlertAction(title: YPConfig.wordings.permissionPopup.cancel,

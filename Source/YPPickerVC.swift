@@ -69,6 +69,9 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
                 self?.didSelectItems?([YPMediaItem.photo(p: YPMediaPhoto(image: img,
                                                                          fromCamera: true))])
             }
+            cameraVC?.didCancel = { [weak self] in
+                self?.close()
+            }
         }
         
         // Video
@@ -166,8 +169,12 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         
         // Re-trigger permission check
         if let vc = vc as? YPLibraryVC {
-            vc.doAfterLibraryPermissionCheck { [weak vc] in
-                vc?.initialize()
+            vc.doAfterLibraryPermissionCheck { [weak vc] status in
+                if status {
+                    vc?.initialize()
+                } else {
+                    self.close()
+                }
             }
         } else if let cameraVC = vc as? YPCameraVC {
             cameraVC.start()

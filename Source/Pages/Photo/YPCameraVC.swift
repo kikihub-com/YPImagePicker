@@ -12,6 +12,7 @@ import Photos
 
 internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermissionCheckable {
     var didCapturePhoto: ((UIImage) -> Void)?
+    var didCancel: (() -> Void)?
     let v: YPCameraView!
 
     private let photoCapture = YPPhotoCaptureHelper()
@@ -64,17 +65,22 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
     }
     
     func start() {
-        doAfterCameraPermissionCheck { [weak self] in
-            guard let previewContainer = self?.v.previewViewContainer else {
-                return
-            }
-
-            self?.photoCapture.start(with: previewContainer, completion: {
-                DispatchQueue.main.async {
-                    self?.isInited = true
-                    self?.updateFlashButtonUI()
+        doAfterCameraPermissionCheck { [weak self] status in
+            if status {
+                guard let previewContainer = self?.v.previewViewContainer else {
+                    return
                 }
-            })
+
+                self?.photoCapture.start(with: previewContainer, completion: {
+                    DispatchQueue.main.async {
+                        self?.isInited = true
+                        self?.updateFlashButtonUI()
+                    }
+                })
+            } else {
+                self?.didCancel?()
+            }
+            
         }
     }
 
@@ -129,8 +135,11 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
     
     @objc
     func shotButtonTapped() {
-        doAfterCameraPermissionCheck { [weak self] in
-            self?.shoot()
+        doAfterCameraPermissionCheck { [weak self] status in
+            if status {
+                self?.shoot()
+            }
+            
         }
     }
     

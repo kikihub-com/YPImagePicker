@@ -27,7 +27,7 @@ internal struct YPPermissionManager {
         case .limited:
             completion(true)
         case .restricted, .denied:
-            let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(cancelBlock: {
+            let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(alertType: .photoLibrary, cancelBlock: {
                 completion(false)
             })
             sourceVC.present(alert, animated: true, completion: nil)
@@ -60,7 +60,7 @@ internal struct YPPermissionManager {
         case .authorized:
             completion(true)
         case .restricted, .denied:
-            let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(cancelBlock: {
+            let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(alertType: .camera, cancelBlock: {
                 completion(false)
             })
             sourceVC.present(alert, animated: true, completion: nil)
