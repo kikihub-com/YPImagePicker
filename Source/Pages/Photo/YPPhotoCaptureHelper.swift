@@ -62,7 +62,7 @@ extension YPPhotoCaptureHelper {
     }
     
     func stopCamera() {
-        if session.isRunning {
+        if session.isRunning && isCaptureSessionSetup == true {
             sessionQueue.async { [weak self] in
                 self?.session.stopRunning()
             }

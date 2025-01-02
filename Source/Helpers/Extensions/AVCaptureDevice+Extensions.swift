@@ -18,11 +18,17 @@ extension AVCaptureDevice {
 
             switch torchMode {
             case .auto:
-                torchMode = .on
+                if isTorchModeSupported(.on) {
+                    torchMode = .on
+                }
             case .on:
-                torchMode = .off
+                if isTorchModeSupported(.off) {
+                    torchMode = .off
+                }
             case .off:
-                torchMode = .auto
+                if isTorchModeSupported(.auto) {
+                    torchMode = .auto
+                }
             @unknown default:
                 throw YPError.custom(message: "unknown default case")
             }
