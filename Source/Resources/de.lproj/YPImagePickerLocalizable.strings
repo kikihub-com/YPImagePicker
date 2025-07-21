@@ -20,3 +20,5 @@
 "YPImagePickerVideoTooLong" = "Die Videolänge darf %@ Sekunden nicht überschreiten.";
 "YPImagePickerVideoTooShort" = "Video muss mindestens %@ Sekunden lang sein";
 "YPImagePickerWarningItemsLimit" = "Die Obergrenze liegt bei %d Fotos oder Videos";
+"YPImagePickerLimitedAccessText" = "Fotozugriff ist begrenzt 😕";
+"YPImagePickerLimitedAccessButton" = "Verwalten";

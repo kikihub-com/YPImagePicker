@@ -78,6 +78,16 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
             v.assetViewContainer.setMultipleSelectionMode(on: isMultipleSelectionEnabled)
             v.collectionView.reloadData()
         }
+        v.limitAccessATapped = {
+            if #available(iOS 14, *) {
+                PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self)
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+        doAfterLibraryPermissionCheck { [weak self] status in
+            self?.v.updateLimitedAccessView()
+        }
 
         guard mediaManager.hasResultItems else {
             return

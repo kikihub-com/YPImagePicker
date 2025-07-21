@@ -20,3 +20,5 @@
 "YPImagePickerVideoTooLong" = "Wybierz film krótszy niż %@ s.";
 "YPImagePickerVideoTooShort" = "Film musi mieć długość co najmniej %@ s.";
 "YPImagePickerWarningItemsLimit" = "Limit zdjęć lub filmów to %d";
+"YPImagePickerLimitedAccessText" = "Ograniczony dostęp do zdjęć 😕";
+"YPImagePickerLimitedAccessButton" = "Zarządzaj";

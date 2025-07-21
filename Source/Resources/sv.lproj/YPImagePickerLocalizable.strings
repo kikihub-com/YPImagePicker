@@ -20,3 +20,5 @@
 "YPImagePickerVideoTooLong" = "Välj en video som är kortare än %@ sekunder";
 "YPImagePickerVideoTooShort" = "Videon måste vara minst %@ sekunder";
 "YPImagePickerWarningItemsLimit" = "Välj maximalt %d bilder/videor";
+"YPImagePickerLimitedAccessText" = "Begränsad fotoåtkomst 😕";
+"YPImagePickerLimitedAccessButton" = "Hantera";

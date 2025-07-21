@@ -20,3 +20,5 @@
 "YPImagePickerVideoTooLong" = "Pořiďte video kratší než %@ sekund";
 "YPImagePickerVideoTooShort" = "Video musí být dlouhé alespoň %@ sekund";
 "YPImagePickerWarningItemsLimit" = "Maximální počet fotografií, nebo videí je %d";
+"YPImagePickerLimitedAccessText" = "Přístup k fotkám je omezen 😕";
+"YPImagePickerLimitedAccessButton" = "Spravovat";

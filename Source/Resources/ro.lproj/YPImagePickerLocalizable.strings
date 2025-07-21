@@ -20,3 +20,5 @@
 "YPImagePickerVideoTooLong" = " Alegeți un videoclip cu mai puțin de %@ secunde";
 "YPImagePickerVideoTooShort" = "Videoclipul trebuie să aibă cel puțin %@ secunde";
 "YPImagePickerWarningItemsLimit" = "Limita este de %d fotografii sau videoclipuri";
+"YPImagePickerLimitedAccessText" = "Acces foto limitat 😕";
+"YPImagePickerLimitedAccessButton" = "Gestionează";

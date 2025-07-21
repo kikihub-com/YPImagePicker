@@ -48,6 +48,7 @@ internal final class YPLibraryView: UIView {
         v.font = YPConfig.fonts.libaryWarningFont
         return v
     }()
+    internal var limitAccessView: UIView?
 
     // MARK: - Private vars
 
@@ -81,6 +82,7 @@ internal final class YPLibraryView: UIView {
             }
         }
     }
+    var limitAccessATapped: (() -> Void)?
 
     // MARK: - Init
 
@@ -166,7 +168,49 @@ internal final class YPLibraryView: UIView {
 
     // MARK: - Private Methods
 
+    private func createLimitAccessView() -> UIView {
+        let limitAccessView = UIView()
+        
+        let label1 = UILabel()
+        label1.text = ypLocalized("YPImagePickerLimitedAccessText")
+        label1.font = .systemFont(ofSize: 12, weight: .regular)
+        label1.numberOfLines = 0
+        label1.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        let label2 = UILabel()
+        label2.text = ypLocalized("YPImagePickerLimitedAccessButton")
+        label2.font = .systemFont(ofSize: 12, weight: .bold)
+        label2.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+
+        let spacer = UIView()
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        // Stack view
+        let stackView = UIStackView(arrangedSubviews: [label1, spacer, label2])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.spacing = 2
+        limitAccessView.addSubview(stackView)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.centerYAnchor.constraint(equalTo: limitAccessView.centerYAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: limitAccessView.leadingAnchor, constant: 20).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: limitAccessView.trailingAnchor, constant: -20).isActive = true
+        
+        return limitAccessView
+    }
+    
     private func setupLayout() {
+        limitAccessView = createLimitAccessView()
+        
+        guard let limitAccessView else { return }
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapLimitAccess))
+        limitAccessView.isUserInteractionEnabled = true
+        limitAccessView.addGestureRecognizer(tap)
+        limitAccessView.backgroundColor = UIColor(red: 248/255, green: 215/255, blue: 82/255, alpha: 1.0)
+
         subviews(
             collectionContainerView.subviews(
                 collectionView
@@ -178,7 +222,8 @@ internal final class YPLibraryView: UIView {
             progressView,
             maxNumberWarningView.subviews(
                 maxNumberWarningLabel
-            )
+            ),
+            limitAccessView
         )
 
         collectionContainerView.fillContainer()
@@ -187,11 +232,14 @@ internal final class YPLibraryView: UIView {
         assetViewContainer.Bottom == line.Top
         line.height(1)
         line.fillHorizontally()
-
+        limitAccessView.fillHorizontally()//.bottom(0)
+        limitAccessView.Bottom == collectionView.Top
+        updateLimitedAccessView()
+        
         assetViewContainer.top(0).fillHorizontally().heightEqualsWidth()
         self.assetViewContainerConstraintTop = assetViewContainer.topConstraint
         assetZoomableView.fillContainer().heightEqualsWidth()
-        assetZoomableView.Bottom == collectionView.Top
+        assetZoomableView.Bottom == limitAccessView.Top
         assetViewContainer.sendSubviewToBack(assetZoomableView)
 
         progressView.height(5).fillHorizontally()
@@ -200,5 +248,35 @@ internal final class YPLibraryView: UIView {
         |maxNumberWarningView|.bottom(0)
         maxNumberWarningView.Top == safeAreaLayoutGuide.Bottom - 40
         maxNumberWarningLabel.centerHorizontally().top(11)
+    }
+    func updateLimitedAccessView() {
+        guard let limitAccessView else { return }
+        if #available(iOS 14, *) {
+            let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+            if status == .limited {
+                limitAccessView.isHidden = false
+                if limitAccessView.heightConstraint == nil {
+                    limitAccessView.height(28)
+                } else {
+                    limitAccessView.heightConstraint?.constant = 28
+                }
+            } else {
+                limitAccessView.isHidden = true
+                if limitAccessView.heightConstraint == nil {
+                    limitAccessView.height(0)
+                } else {
+                    limitAccessView.heightConstraint?.constant = 0
+                }
+            }
+        } else {
+            limitAccessView.isHidden = true
+            limitAccessView.height(0)
+        }
+        limitAccessView.setNeedsLayout()
+        limitAccessView.layoutIfNeeded()
+    }
+    
+    @objc private func didTapLimitAccess() {
+        self.limitAccessATapped?()
     }
 }
