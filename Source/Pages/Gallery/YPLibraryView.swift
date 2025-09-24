@@ -16,7 +16,7 @@ internal final class YPLibraryView: UIView {
 
     internal let assetZoomableViewMinimalVisibleHeight: CGFloat  = 50
     internal var assetViewContainerConstraintTop: NSLayoutConstraint?
-    internal let collectiviewDidLoadonView: UICollectionView = {
+    internal let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         let v = UICollectionView(frame: .zero, collectionViewLayout: layout)
