@@ -47,5 +47,6 @@ final class YPBottomPagerView: UIView {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.scrollsToTop = false
         scrollView.bounces = false
+        scrollView.backgroundColor = .clear
     }
 }
