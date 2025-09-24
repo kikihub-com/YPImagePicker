@@ -74,21 +74,21 @@ open class YPImagePicker: UINavigationController {
         setupLoadingView()
         
         let colors = YPImagePickerConfiguration.shared.colors
-        
-        if #available(iOS 13.0, *) {
-            let bar = UINavigationBarAppearance()
-            bar.configureWithOpaqueBackground()
-            bar.backgroundColor = colors.pickerBackgroundColor
-            bar.titleTextAttributes = [.foregroundColor: colors.navigationBarTintColor]
-
-            navigationBar.standardAppearance = bar
-            navigationBar.compactAppearance = bar
-            navigationBar.scrollEdgeAppearance = bar
-        } else {
-            navigationBar.barTintColor = colors.pickerBackgroundColor
-            navigationBar.titleTextAttributes = [.foregroundColor: colors.navigationBarTintColor]
-        }
-       
+//        
+//        if #available(iOS 13.0, *) {
+//            let bar = UINavigationBarAppearance()
+//            bar.configureWithOpaqueBackground()
+//            bar.backgroundColor = colors.pickerBackgroundColor
+//            bar.titleTextAttributes = [.foregroundColor: colors.navigationBarTintColor]
+//
+//            navigationBar.standardAppearance = bar
+//            navigationBar.compactAppearance = bar
+//            navigationBar.scrollEdgeAppearance = bar
+//        } else {
+//            navigationBar.barTintColor = colors.pickerBackgroundColor
+//            navigationBar.titleTextAttributes = [.foregroundColor: colors.navigationBarTintColor]
+//        }
+//       
         navigationBar.isTranslucent = false
         navigationBar.tintColor = colors.navigationBarTintColor
         view.backgroundColor = colors.pickerBackgroundColor
