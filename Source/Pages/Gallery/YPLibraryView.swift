@@ -21,8 +21,6 @@ internal final class YPLibraryView: UIView {
         layout.scrollDirection = .vertical
         let v = UICollectionView(frame: .zero, collectionViewLayout: layout)
         v.backgroundColor = YPConfig.colors.libraryScreenBackgroundColor
-        v.collectionViewLayout.backgroundColor = YPConfig.colors.libraryScreenBackgroundColor
-        v.assetViewContainer.backgroundColor = .clear 
         v.collectionViewLayout = layout
         v.showsHorizontalScrollIndicator = false
         v.alwaysBounceVertical = true
