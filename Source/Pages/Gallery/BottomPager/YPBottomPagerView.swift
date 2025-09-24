@@ -17,6 +17,8 @@ final class YPBottomPagerView: UIView {
     convenience init() {
         self.init(frame: .zero)
         backgroundColor = YPImagePickerConfiguration.shared.colors.pickerBackgroundColor
+        header.backgroundColor = YPImagePickerConfiguration.shared.colors.pickerBackgroundColor
+        scrollView.backgroundColor = .clear
         
         subviews(
             scrollView,
@@ -47,6 +49,5 @@ final class YPBottomPagerView: UIView {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.scrollsToTop = false
         scrollView.bounces = false
-        scrollView.backgroundColor = .clear
     }
 }

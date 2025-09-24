@@ -16,11 +16,13 @@ internal final class YPLibraryView: UIView {
 
     internal let assetZoomableViewMinimalVisibleHeight: CGFloat  = 50
     internal var assetViewContainerConstraintTop: NSLayoutConstraint?
-    internal let collectionView: UICollectionView = {
+    internal let collectiviewDidLoadonView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         let v = UICollectionView(frame: .zero, collectionViewLayout: layout)
         v.backgroundColor = YPConfig.colors.libraryScreenBackgroundColor
+        v.collectionViewLayout.backgroundColor = YPConfig.colors.libraryScreenBackgroundColor
+        v.assetViewContainer.backgroundColor = .clear 
         v.collectionViewLayout = layout
         v.showsHorizontalScrollIndicator = false
         v.alwaysBounceVertical = true
