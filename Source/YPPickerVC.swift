@@ -47,7 +47,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     open override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = YPConfig.colors.safeAreaBackgroundColor
+        view.backgroundColor = YPImagePickerConfiguration.shared.colors.pickerBackgroundColor
         
         delegate = self
         
@@ -68,6 +68,9 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
             cameraVC?.didCapturePhoto = { [weak self] img in
                 self?.didSelectItems?([YPMediaItem.photo(p: YPMediaPhoto(image: img,
                                                                          fromCamera: true))])
+            }
+            cameraVC?.didCancel = { [weak self] in
+                self?.close()
             }
         }
         
@@ -166,8 +169,12 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         
         // Re-trigger permission check
         if let vc = vc as? YPLibraryVC {
-            vc.doAfterLibraryPermissionCheck { [weak vc] in
-                vc?.initialize()
+            vc.doAfterLibraryPermissionCheck { [weak vc] status in
+                if status {
+                    vc?.initialize()
+                } else {
+                    self.close()
+                }
             }
         } else if let cameraVC = vc as? YPCameraVC {
             cameraVC.start()

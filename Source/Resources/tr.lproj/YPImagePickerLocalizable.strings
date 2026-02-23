@@ -20,3 +20,5 @@
 "YPImagePickerVideoTooLong" = "%@ saniyeden daha kısa bir video seç";
 "YPImagePickerVideoTooShort" = "Videolar en az %@ saniye uzunluğunda olmalıdır";
 "YPImagePickerWarningItemsLimit" = "Sınır %d fotoğraf veya videodur";
+"YPImagePickerLimitedAccessText" = "Fotoğraf erişimi sınırlı 😕";
+"YPImagePickerLimitedAccessButton" = "Yönet";

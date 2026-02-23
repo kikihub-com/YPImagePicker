@@ -16,6 +16,7 @@ public struct YPWordings {
     public struct PermissionPopup {
         public var title = ypLocalized("YPImagePickerPermissionDeniedPopupTitle")
         public var message = ypLocalized("YPImagePickerPermissionDeniedPopupMessage")
+        public var messageCamera = ypLocalized("YPImagePickerPermissionDeniedPopupMessage")
         public var cancel = ypLocalized("YPImagePickerPermissionDeniedPopupCancel")
         public var grantPermission = ypLocalized("YPImagePickerPermissionDeniedPopupGrantPermission")
     }

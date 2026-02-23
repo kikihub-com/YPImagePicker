@@ -20,3 +20,5 @@
 "YPImagePickerVideoTooLong" = "Velg en video som er kortere enn %@ sekunder lang";
 "YPImagePickerVideoTooShort" = "Videoen må være minst %@ sekunder";
 "YPImagePickerWarningItemsLimit" = "Grensen er %d bilder eller videoer";
+"YPImagePickerLimitedAccessText" = "Begrenset fototilgang 😕";
+"YPImagePickerLimitedAccessButton" = "Administrer";
