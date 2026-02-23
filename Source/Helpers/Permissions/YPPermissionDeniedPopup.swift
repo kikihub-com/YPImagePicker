@@ -12,12 +12,15 @@ internal struct YPPermissionDeniedPopup {
     enum AlertType {
         case camera
         case photoLibrary
-        
+        case microphone
+
         func getMessage() -> String {
             switch self {
             case .camera:
                 return YPConfig.wordings.permissionPopup.messageCamera
             case .photoLibrary:
+                return YPConfig.wordings.permissionPopup.message
+            case .microphone:
                 return YPConfig.wordings.permissionPopup.message
             }
         }

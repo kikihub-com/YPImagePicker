@@ -69,7 +69,7 @@ internal struct YPPermissionManager {
             case .granted:
                 completion(true)
             case .denied:
-                let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(cancelBlock: {
+                let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(alertType: .microphone, cancelBlock: {
                     completion(false)
                 })
                 sourceVC.present(alert, animated: true, completion: nil)
@@ -89,7 +89,7 @@ internal struct YPPermissionManager {
             case .granted:
                 completion(true)
             case .denied:
-                let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(cancelBlock: {
+                let alert = YPPermissionDeniedPopup.buildGoToSettingsAlert(alertType: .microphone, cancelBlock: {
                     completion(false)
                 })
                 sourceVC.present(alert, animated: true, completion: nil)
