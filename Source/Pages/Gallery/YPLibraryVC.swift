@@ -124,6 +124,32 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
 
             strongSelf.updateCropInfo()
         }
+
+        // iCloud download progress
+        NotificationCenter.default.addObserver(forName: .ypImagePickerICloudDownloadProgress,
+                                               object: nil, queue: .main) { [weak self] notification in
+            if let progress = notification.userInfo?["progress"] as? Float {
+                self?.v.updateProgress(progress)
+            }
+        }
+
+        // iCloud download failed
+        NotificationCenter.default.addObserver(forName: .ypImagePickerICloudDownloadFailed,
+                                               object: nil, queue: .main) { [weak self] _ in
+            guard let self else { return }
+            self.v.hideLoader()
+            self.v.updateProgress(0)
+            self.isProcessing = false
+            self.delegate?.libraryViewFinishedLoading()
+
+            let alert = UIAlertController(
+                title: nil,
+                message: "Unable to download photo from iCloud. Please check your internet connection.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: YPConfig.wordings.ok, style: .default))
+            self.present(alert, animated: true)
+        }
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -157,6 +183,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
         pausePlayer()
         NotificationCenter.default.removeObserver(self)
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
+        v.updateProgress(0)
     }
 
     // MARK: - Crop control
