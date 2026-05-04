@@ -173,22 +173,7 @@ internal final class YPLibraryView: UIView {
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        var buttonConfig = UIButton.Configuration.filled()
-        buttonConfig.title = ypLocalized("YPImagePickerLimitedAccessButton")
-        buttonConfig.baseBackgroundColor = .white
-        buttonConfig.baseForegroundColor = .black
-        buttonConfig.cornerStyle = .capsule
-        buttonConfig.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 14, bottom: 6, trailing: 14)
-        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
-            var updated = attrs
-            updated.font = .systemFont(ofSize: 13, weight: .semibold)
-            return updated
-        }
-
-        let manageButton = UIButton(configuration: buttonConfig)
-        manageButton.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        manageButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        manageButton.addTarget(self, action: #selector(didTapLimitAccess), for: .touchUpInside)
+        let manageButton = makeManageGlassButton()
 
         let stackView = UIStackView(arrangedSubviews: [label, manageButton])
         stackView.axis = .horizontal
@@ -199,9 +184,64 @@ internal final class YPLibraryView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.centerYAnchor.constraint(equalTo: limitAccessView.centerYAnchor).isActive = true
         stackView.leadingAnchor.constraint(equalTo: limitAccessView.leadingAnchor, constant: 16).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: limitAccessView.trailingAnchor, constant: -8).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: limitAccessView.trailingAnchor, constant: -12).isActive = true
 
         return limitAccessView
+    }
+
+    private func makeManageGlassButton() -> UIView {
+        let buttonHeight: CGFloat = 36
+
+        var config = UIButton.Configuration.plain()
+        config.title = ypLocalized("YPImagePickerLimitedAccessButton")
+        config.baseForegroundColor = .black
+        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+            var updated = attrs
+            updated.font = .systemFont(ofSize: 13, weight: .semibold)
+            return updated
+        }
+
+        let button = UIButton(configuration: config)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(didTapLimitAccess), for: .touchUpInside)
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        let effect: UIVisualEffect
+        if #available(iOS 26.0, *) {
+            effect = UIGlassEffect()
+        } else {
+            effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        }
+        let glassView = UIVisualEffectView(effect: effect)
+        glassView.translatesAutoresizingMaskIntoConstraints = false
+        glassView.layer.cornerRadius = buttonHeight / 2
+        glassView.layer.cornerCurve = .continuous
+        glassView.clipsToBounds = true
+        glassView.isUserInteractionEnabled = false
+
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(glassView)
+        container.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            container.heightAnchor.constraint(equalToConstant: buttonHeight),
+            glassView.topAnchor.constraint(equalTo: container.topAnchor),
+            glassView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            glassView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            glassView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            button.topAnchor.constraint(equalTo: container.topAnchor),
+            button.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            button.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+        ])
+
+        container.setContentHuggingPriority(.required, for: .horizontal)
+        container.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        return container
     }
     
     private func setupLayout() {
@@ -259,9 +299,9 @@ internal final class YPLibraryView: UIView {
             if status == .limited {
                 limitAccessView.isHidden = false
                 if limitAccessView.heightConstraint == nil {
-                    limitAccessView.height(44)
+                    limitAccessView.height(52)
                 } else {
-                    limitAccessView.heightConstraint?.constant = 44
+                    limitAccessView.heightConstraint?.constant = 52
                 }
             } else {
                 limitAccessView.isHidden = true
