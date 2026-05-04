@@ -215,8 +215,7 @@ internal final class YPLibraryView: UIView {
                 c.title = "Open Settings"
                 c.baseBackgroundColor = .systemBlue
                 c.baseForegroundColor = .white
-                c.cornerStyle = .fixed
-                c.background.cornerRadius = 12
+                c.cornerStyle = .capsule
                 c.contentInsets = insets
                 c.titleTextAttributesTransformer = titleTransformer
                 return c
@@ -225,7 +224,7 @@ internal final class YPLibraryView: UIView {
                 c.title = "Open Settings"
                 c.baseBackgroundColor = .systemBlue
                 c.baseForegroundColor = .white
-                c.background.cornerRadius = 12
+                c.cornerStyle = .capsule
                 c.contentInsets = insets
                 c.titleTextAttributesTransformer = titleTransformer
                 return c
