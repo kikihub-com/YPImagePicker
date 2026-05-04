@@ -210,8 +210,8 @@ internal final class YPLibraryView: UIView {
             let button = UIButton(configuration: config)
             button.translatesAutoresizingMaskIntoConstraints = false
             button.addTarget(self, action: #selector(didTapLimitAccess), for: .touchUpInside)
-            button.setContentHuggingPriority(.required, for: .horizontal)
-            button.setContentCompressionResistancePriority(.required, for: .horizontal)
+            button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
             button.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
             return button
         }
@@ -244,8 +244,8 @@ internal final class YPLibraryView: UIView {
             button.leadingAnchor.constraint(equalTo: blurView.contentView.leadingAnchor),
             button.trailingAnchor.constraint(equalTo: blurView.contentView.trailingAnchor)
         ])
-        blurView.setContentHuggingPriority(.required, for: .horizontal)
-        blurView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        blurView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        blurView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 
         return blurView
     }
