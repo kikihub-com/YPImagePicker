@@ -191,16 +191,38 @@ internal final class YPLibraryView: UIView {
 
     private func makeManageGlassButton() -> UIView {
         let buttonHeight: CGFloat = 36
-
-        var config = UIButton.Configuration.plain()
-        config.title = ypLocalized("YPImagePickerLimitedAccessButton")
-        config.baseForegroundColor = .black
-        config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
-        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+        let title = ypLocalized("YPImagePickerLimitedAccessButton")
+        let titleTransformer = UIConfigurationTextAttributesTransformer { attrs in
             var updated = attrs
             updated.font = .systemFont(ofSize: 13, weight: .semibold)
             return updated
         }
+        let insets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
+
+        if #available(iOS 26.0, *) {
+            var config = UIButton.Configuration.glass()
+            config.title = title
+            config.cornerStyle = .capsule
+            config.baseForegroundColor = .black
+            config.contentInsets = insets
+            config.titleTextAttributesTransformer = titleTransformer
+
+            let button = UIButton(configuration: config)
+            button.translatesAutoresizingMaskIntoConstraints = false
+            button.addTarget(self, action: #selector(didTapLimitAccess), for: .touchUpInside)
+            button.setContentHuggingPriority(.required, for: .horizontal)
+            button.setContentCompressionResistancePriority(.required, for: .horizontal)
+            button.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+            return button
+        }
+
+        // iOS 15–25: blur capsule background with the button living inside the
+        // effect view's contentView so taps and styling stay coherent.
+        var config = UIButton.Configuration.plain()
+        config.title = title
+        config.baseForegroundColor = .black
+        config.contentInsets = insets
+        config.titleTextAttributesTransformer = titleTransformer
 
         let button = UIButton(configuration: config)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -208,40 +230,24 @@ internal final class YPLibraryView: UIView {
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        let effect: UIVisualEffect
-        if #available(iOS 26.0, *) {
-            effect = UIGlassEffect()
-        } else {
-            effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        }
-        let glassView = UIVisualEffectView(effect: effect)
-        glassView.translatesAutoresizingMaskIntoConstraints = false
-        glassView.layer.cornerRadius = buttonHeight / 2
-        glassView.layer.cornerCurve = .continuous
-        glassView.clipsToBounds = true
-        glassView.isUserInteractionEnabled = false
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        blurView.layer.cornerRadius = buttonHeight / 2
+        blurView.layer.cornerCurve = .continuous
+        blurView.clipsToBounds = true
 
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(glassView)
-        container.addSubview(button)
-
+        blurView.contentView.addSubview(button)
         NSLayoutConstraint.activate([
-            container.heightAnchor.constraint(equalToConstant: buttonHeight),
-            glassView.topAnchor.constraint(equalTo: container.topAnchor),
-            glassView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            glassView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            glassView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            button.topAnchor.constraint(equalTo: container.topAnchor),
-            button.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            button.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+            blurView.heightAnchor.constraint(equalToConstant: buttonHeight),
+            button.topAnchor.constraint(equalTo: blurView.contentView.topAnchor),
+            button.bottomAnchor.constraint(equalTo: blurView.contentView.bottomAnchor),
+            button.leadingAnchor.constraint(equalTo: blurView.contentView.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: blurView.contentView.trailingAnchor)
         ])
+        blurView.setContentHuggingPriority(.required, for: .horizontal)
+        blurView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        container.setContentHuggingPriority(.required, for: .horizontal)
-        container.setContentCompressionResistancePriority(.required, for: .horizontal)
-
-        return container
+        return blurView
     }
     
     private func setupLayout() {
