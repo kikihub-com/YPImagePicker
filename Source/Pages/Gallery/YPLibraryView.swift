@@ -202,17 +202,35 @@ internal final class YPLibraryView: UIView {
         container.isHidden = true
         container.backgroundColor = YPConfig.colors.libraryScreenBackgroundColor
 
-        var config = UIButton.Configuration.filled()
-        config.title = "Open Settings"
-        config.baseBackgroundColor = .systemBlue
-        config.baseForegroundColor = .white
-        config.background.cornerRadius = 12
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32)
-        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+        let titleTransformer = UIConfigurationTextAttributesTransformer { attrs in
             var u = attrs
             u.font = .systemFont(ofSize: 16, weight: .semibold)
             return u
         }
+        let insets = NSDirectionalEdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32)
+
+        let config: UIButton.Configuration = {
+            if #available(iOS 26.0, *) {
+                var c = UIButton.Configuration.prominentGlass()
+                c.title = "Open Settings"
+                c.baseBackgroundColor = .systemBlue
+                c.baseForegroundColor = .white
+                c.cornerStyle = .fixed
+                c.background.cornerRadius = 12
+                c.contentInsets = insets
+                c.titleTextAttributesTransformer = titleTransformer
+                return c
+            } else {
+                var c = UIButton.Configuration.filled()
+                c.title = "Open Settings"
+                c.baseBackgroundColor = .systemBlue
+                c.baseForegroundColor = .white
+                c.background.cornerRadius = 12
+                c.contentInsets = insets
+                c.titleTextAttributesTransformer = titleTransformer
+                return c
+            }
+        }()
 
         let button = UIButton(configuration: config)
         button.translatesAutoresizingMaskIntoConstraints = false
