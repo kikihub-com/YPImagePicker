@@ -164,34 +164,43 @@ internal final class YPLibraryView: UIView {
 
     private func createLimitAccessView() -> UIView {
         let limitAccessView = UIView()
-        
-        let label1 = UILabel()
-        label1.text = ypLocalized("YPImagePickerLimitedAccessText")
-        label1.font = .systemFont(ofSize: 12, weight: .regular)
-        label1.numberOfLines = 0
-        label1.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        limitAccessView.overrideUserInterfaceStyle = .light
 
-        let label2 = UILabel()
-        label2.text = ypLocalized("YPImagePickerLimitedAccessButton")
-        label2.font = .systemFont(ofSize: 12, weight: .bold)
-        label2.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        let label = UILabel()
+        label.text = ypLocalized("YPImagePickerLimitedAccessText")
+        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.textColor = .black
+        label.numberOfLines = 0
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        let spacer = UIView()
-        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        var buttonConfig = UIButton.Configuration.filled()
+        buttonConfig.title = ypLocalized("YPImagePickerLimitedAccessButton")
+        buttonConfig.baseBackgroundColor = .white
+        buttonConfig.baseForegroundColor = .black
+        buttonConfig.cornerStyle = .capsule
+        buttonConfig.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 14, bottom: 6, trailing: 14)
+        buttonConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+            var updated = attrs
+            updated.font = .systemFont(ofSize: 13, weight: .semibold)
+            return updated
+        }
 
-        // Stack view
-        let stackView = UIStackView(arrangedSubviews: [label1, spacer, label2])
+        let manageButton = UIButton(configuration: buttonConfig)
+        manageButton.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        manageButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        manageButton.addTarget(self, action: #selector(didTapLimitAccess), for: .touchUpInside)
+
+        let stackView = UIStackView(arrangedSubviews: [label, manageButton])
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.distribution = .fill
-        stackView.spacing = 2
+        stackView.spacing = 8
         limitAccessView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.centerYAnchor.constraint(equalTo: limitAccessView.centerYAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: limitAccessView.leadingAnchor, constant: 20).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: limitAccessView.trailingAnchor, constant: -20).isActive = true
-        
+        stackView.leadingAnchor.constraint(equalTo: limitAccessView.leadingAnchor, constant: 16).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: limitAccessView.trailingAnchor, constant: -8).isActive = true
+
         return limitAccessView
     }
     
@@ -250,9 +259,9 @@ internal final class YPLibraryView: UIView {
             if status == .limited {
                 limitAccessView.isHidden = false
                 if limitAccessView.heightConstraint == nil {
-                    limitAccessView.height(28)
+                    limitAccessView.height(44)
                 } else {
-                    limitAccessView.heightConstraint?.constant = 28
+                    limitAccessView.heightConstraint?.constant = 44
                 }
             } else {
                 limitAccessView.isHidden = true
