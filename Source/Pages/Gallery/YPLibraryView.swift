@@ -49,6 +49,7 @@ internal final class YPLibraryView: UIView {
         return v
     }()
     internal var limitAccessView: UIView?
+    internal lazy var emptyStateView: UIView = makeEmptyStateView()
 
     // MARK: - Private vars
 
@@ -83,6 +84,7 @@ internal final class YPLibraryView: UIView {
         }
     }
     var limitAccessATapped: (() -> Void)?
+    var openSettingsTapped: (() -> Void)?
 
     // MARK: - Init
 
@@ -164,92 +166,78 @@ internal final class YPLibraryView: UIView {
 
     private func createLimitAccessView() -> UIView {
         let limitAccessView = UIView()
-        limitAccessView.overrideUserInterfaceStyle = .light
 
-        let label = UILabel()
-        label.text = ypLocalized("YPImagePickerLimitedAccessText")
-        label.font = .systemFont(ofSize: 13, weight: .regular)
-        label.textColor = .black
-        label.numberOfLines = 0
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        let label1 = UILabel()
+        label1.text = ypLocalized("YPImagePickerLimitedAccessText")
+        label1.font = .systemFont(ofSize: 12, weight: .regular)
+        label1.numberOfLines = 0
+        label1.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        let manageButton = makeManageGlassButton()
+        let label2 = UILabel()
+        label2.text = ypLocalized("YPImagePickerLimitedAccessButton")
+        label2.font = .systemFont(ofSize: 12, weight: .bold)
+        label2.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 
-        let stackView = UIStackView(arrangedSubviews: [label, manageButton])
+        let spacer = UIView()
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        // Stack view
+        let stackView = UIStackView(arrangedSubviews: [label1, spacer, label2])
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.distribution = .fill
-        stackView.spacing = 8
+        stackView.spacing = 2
         limitAccessView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.centerYAnchor.constraint(equalTo: limitAccessView.centerYAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: limitAccessView.leadingAnchor, constant: 16).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: limitAccessView.trailingAnchor, constant: -12).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: limitAccessView.leadingAnchor, constant: 20).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: limitAccessView.trailingAnchor, constant: -20).isActive = true
 
         return limitAccessView
     }
 
-    private func makeManageGlassButton() -> UIView {
-        let buttonHeight: CGFloat = 36
-        let title = ypLocalized("YPImagePickerLimitedAccessButton")
-        let titleTransformer = UIConfigurationTextAttributesTransformer { attrs in
-            var updated = attrs
-            updated.font = .systemFont(ofSize: 13, weight: .semibold)
-            return updated
+    private func makeEmptyStateView() -> UIView {
+        let container = UIView()
+        container.isHidden = true
+        container.backgroundColor = YPConfig.colors.libraryScreenBackgroundColor
+
+        var config = UIButton.Configuration.filled()
+        config.title = "Open Settings"
+        config.baseBackgroundColor = .systemBlue
+        config.baseForegroundColor = .white
+        config.background.cornerRadius = 12
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 32, bottom: 0, trailing: 32)
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+            var u = attrs
+            u.font = .systemFont(ofSize: 16, weight: .semibold)
+            return u
         }
-        let insets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
-
-        if #available(iOS 26.0, *) {
-            var config = UIButton.Configuration.glass()
-            config.title = title
-            config.cornerStyle = .capsule
-            config.baseForegroundColor = .black
-            config.contentInsets = insets
-            config.titleTextAttributesTransformer = titleTransformer
-
-            let button = UIButton(configuration: config)
-            button.translatesAutoresizingMaskIntoConstraints = false
-            button.addTarget(self, action: #selector(didTapLimitAccess), for: .touchUpInside)
-            button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-            button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-            button.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
-            return button
-        }
-
-        // iOS 15–25: blur capsule background with the button living inside the
-        // effect view's contentView so taps and styling stay coherent.
-        var config = UIButton.Configuration.plain()
-        config.title = title
-        config.baseForegroundColor = .black
-        config.contentInsets = insets
-        config.titleTextAttributesTransformer = titleTransformer
 
         let button = UIButton(configuration: config)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(didTapLimitAccess), for: .touchUpInside)
-        button.setContentHuggingPriority(.required, for: .horizontal)
-        button.setContentCompressionResistancePriority(.required, for: .horizontal)
+        button.addTarget(self, action: #selector(didTapOpenSettings), for: .touchUpInside)
 
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-        blurView.translatesAutoresizingMaskIntoConstraints = false
-        blurView.layer.cornerRadius = buttonHeight / 2
-        blurView.layer.cornerCurve = .continuous
-        blurView.clipsToBounds = true
-
-        blurView.contentView.addSubview(button)
+        container.addSubview(button)
         NSLayoutConstraint.activate([
-            blurView.heightAnchor.constraint(equalToConstant: buttonHeight),
-            button.topAnchor.constraint(equalTo: blurView.contentView.topAnchor),
-            button.bottomAnchor.constraint(equalTo: blurView.contentView.bottomAnchor),
-            button.leadingAnchor.constraint(equalTo: blurView.contentView.leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: blurView.contentView.trailingAnchor)
+            button.heightAnchor.constraint(equalToConstant: 56),
+            button.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            button.leadingAnchor.constraint(greaterThanOrEqualTo: container.leadingAnchor, constant: 24),
+            button.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -24)
         ])
-        blurView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        blurView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 
-        return blurView
+        return container
     }
-    
+
+    @objc private func didTapOpenSettings() {
+        openSettingsTapped?()
+    }
+
+    internal func updateEmptyState(isEmpty: Bool) {
+        emptyStateView.isHidden = !isEmpty
+    }
+
     private func setupLayout() {
         limitAccessView = createLimitAccessView()
         
@@ -262,7 +250,8 @@ internal final class YPLibraryView: UIView {
 
         subviews(
             collectionContainerView.subviews(
-                collectionView
+                collectionView,
+                emptyStateView
             ),
             line,
             assetViewContainer.subviews(
@@ -277,6 +266,13 @@ internal final class YPLibraryView: UIView {
 
         collectionContainerView.fillContainer()
         collectionView.fillHorizontally().bottom(0)
+        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            emptyStateView.leadingAnchor.constraint(equalTo: collectionView.leadingAnchor),
+            emptyStateView.trailingAnchor.constraint(equalTo: collectionView.trailingAnchor),
+            emptyStateView.topAnchor.constraint(equalTo: collectionView.topAnchor),
+            emptyStateView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor)
+        ])
 
         assetViewContainer.Bottom == line.Top
         line.height(1)
@@ -305,9 +301,9 @@ internal final class YPLibraryView: UIView {
             if status == .limited {
                 limitAccessView.isHidden = false
                 if limitAccessView.heightConstraint == nil {
-                    limitAccessView.height(52)
+                    limitAccessView.height(28)
                 } else {
-                    limitAccessView.heightConstraint?.constant = 52
+                    limitAccessView.heightConstraint?.constant = 28
                 }
             } else {
                 limitAccessView.isHidden = true

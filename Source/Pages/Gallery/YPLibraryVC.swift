@@ -94,6 +94,10 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
                 // Fallback on earlier versions
             }
         }
+        v.openSettingsTapped = {
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            UIApplication.shared.open(url)
+        }
         doAfterLibraryPermissionCheck { [weak self] status in
             self?.v.updateLimitedAccessView()
         }
@@ -289,6 +293,7 @@ internal final class YPLibraryVC: UIViewController, YPPermissionCheckable {
     }
 
     private func refreshMediaRequestAfterFetch() {
+        v.updateEmptyState(isEmpty: !mediaManager.hasResultItems)
         if mediaManager.hasResultItems,
         let firstAsset = mediaManager.getAsset(at: 0) {
             changeAsset(firstAsset)
