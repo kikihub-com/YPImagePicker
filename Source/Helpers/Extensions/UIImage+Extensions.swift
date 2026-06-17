@@ -24,7 +24,15 @@ internal extension UIImage {
         if imageOrientation == .up {
             return self
         }
-        
+
+        // Some images (no embedded color profile / non-CG-backed) yield a nil
+        // cgImage or colorSpace; the force-unwraps below used to SIGTRAP on them
+        // (background image-fetch crash). Degrade gracefully — return the
+        // original rather than crash.
+        guard let cgImage = cgImage, let colorSpace = cgImage.colorSpace else {
+            return self
+        }
+
         // Process the transform corresponding to the current orientation
         var transform = CGAffineTransform.identity
         switch imageOrientation {
@@ -59,16 +67,16 @@ internal extension UIImage {
         let context = CGContext(data: nil,
                                 width: Int(size.width),
                                 height: Int(size.height),
-                                bitsPerComponent: cgImage!.bitsPerComponent,
+                                bitsPerComponent: cgImage.bitsPerComponent,
                                 bytesPerRow: 0,
-                                space: cgImage!.colorSpace!,
-                                bitmapInfo: cgImage!.bitmapInfo.rawValue)
+                                space: colorSpace,
+                                bitmapInfo: cgImage.bitmapInfo.rawValue)
         context?.concatenate(transform)
         switch imageOrientation {
         case .left, .leftMirrored, .right, .rightMirrored:
-            context?.draw(cgImage!, in: CGRect(x: 0, y: 0, width: size.height, height: size.width))
+            context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.height, height: size.width))
         default:
-            context?.draw(cgImage!, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+            context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
         }
         
         if let newImageRef =  context?.makeImage() {
